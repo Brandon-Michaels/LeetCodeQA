@@ -7,7 +7,7 @@ class Solution:
         # new value, else if not doable increase left ptr
         # repeat until left and right converge at same value in k array
         # Time-Complexity: O(nlogn)
-        # Space-Complexity: O(1)??
+        # Space-Complexity: O(1)
 
         max_val = 0
 
