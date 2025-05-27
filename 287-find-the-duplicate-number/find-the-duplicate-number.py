@@ -1,21 +1,7 @@
 class Solution:
     def findDuplicate(self, nums: List[int]) -> int:
-        # Time-Complexity: O(n)
-        # Space-Complexity: O(n), where n is size of list nums
-        # numSet = set()
-
-        # for n in nums:
-        #     if (n in numSet):
-        #         return n
-        #     numSet.add(n)
-
-        # Alternative Approach:
-        # Sort -> Time-Complexity: O(nlogn)
-        # Space-Complexity: O(1)
-
-        # Optimized:
         # Intuition:
-        # Negate values as you traverse them, 1 -> -1, 2 -> -2
+        # Negate Marking of values as you traverse them, 1 -> -1, 2 -> -2
         # if you go back to original index where it is encountered, 
         # abs(nums[i]) - 1, you can see at that spot if it is neg. if
         # so, then return that number
