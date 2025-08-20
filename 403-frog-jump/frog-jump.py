@@ -6,8 +6,8 @@
 # Approach:
 # Use DP table containing HashMap
 # HashMap will be => key: stone, value: set containing jump dist frog made to reach that stone
-# Space-Complexity:
-# Time-Complexity:
+# Time-Complexity: O(n * m), where n is len(stones), m is len(prev jump)
+# Space-Complexity: O(n * m)
 
 class Solution:
     def canCross(self, stones: List[int]) -> bool:
