@@ -5,29 +5,32 @@
 # emptying WHOLE jug or pouring water from one jug to another
 
 # Approach:
-
+# Use Greatest Common Denominator to determine if we can make some combination
+# of x, y to reach target
+# If we compute GCD with Euclidean Algorithm, we can repeatdely reduce, x, y until
+# x or y becomes zero
+# KEY IDEA: the target will ONLY EVER BE REACHED IF AND ONLY IF the target is a MULTIPLE
+# of the GCD of (x, y)
 
 class Solution:
     def canMeasureWater(self, x: int, y: int, target: int) -> bool:
-        # If target exceeds total capacity, impossible
+        # Edge Cases
         if target > x + y:
             return False
-        # If target is zero, trivially possible
         if target == 0:
             return True
-        # If one jug is zero, only exact fills of the other or zero work
         if x == 0 or y == 0:
-            return target == x or target == y
-
-        # Helper to compute gcd using Euclidean algorithm
+            return (target == x or target == y)
+        
+        # all other cases, see if target is multiple of GCD
         def gcd(a: int, b: int) -> int:
-            # Repeatedly reduce (a, b) until b becomes zero
+            # reduce (a, b) until b becomes zero
             while b != 0:
-                a, b = b, a % b
+                tmp = a
+                a = b
+                b = tmp % b
+            
             return a
 
-        # Bézout condition: target must be a multiple of gcd(x, y)
-        g = gcd(x, y)
-        return target % g == 0
-
-        
+        res = gcd(x, y)
+        return target % res == 0
