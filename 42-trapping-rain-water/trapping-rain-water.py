@@ -61,9 +61,3 @@ class Solution:
 
         return water
 
-def main():
-    test = Solution()
-    print(test.trap([0,1,2,3,4]))
-
-if __name__ == "__main__":
-    main()
