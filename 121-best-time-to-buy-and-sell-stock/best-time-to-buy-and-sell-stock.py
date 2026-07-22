@@ -1,21 +1,34 @@
+# Problem Summary
+# given an array prices, prices[i] is price of stock on ith day, return max profit
+# I/O: arr prices, return maximum profit from buying one day, selling diff. day in future, or return 0 if no profit
+# Assumptions/EC: prices array non-empty, price is between 0-1000
+
+# Naive:
+# Brute force check all possible pairs of transactions
+# Time-Complexity: O(n^2), n = len(prices)
+# Space: O(1)
+
+# Optimal Approach:
+# Sliding Window
+# left/right ptr, expand right ptr as long as we are making profit, else left == right ptr
+# Time-Complexity: O(n), n = len(prices)
+# Space-Complexity: O(1)
+
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        # Sliding Window
-        # Expand right ptr as long as making profit
-        # Else, left ptr == right ptr
-        # Time-Complexity: O(n)
-        # Space-Complexity: O(1)
+        maxProfit = 0
+        left = 0
 
-        left_ptr = 0
-        right_ptr = 0
-        max_profit = 0
+        # must buy and sell on diff. days
+        if not prices or len(prices) == 1:
+            return 0
 
-        while (right_ptr < len(prices)):
-            curr_prof = prices[right_ptr] - prices[left_ptr]
-            if (curr_prof >= 0):
-                max_profit = max(max_profit, curr_prof)
-                right_ptr += 1
-            else:
-                left_ptr = right_ptr
+        for r in range(1, len(prices)):
+            curr_prof = prices[r] - prices[left]
+            if curr_prof < 0:
+                left = r
+            if curr_prof > maxProfit:
+                maxProfit = curr_prof
+
+        return maxProfit
         
-        return max_profit
