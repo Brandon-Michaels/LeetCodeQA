@@ -1,98 +1,55 @@
-# Problem Summary:
-# given list of orders (buy/sell, price, amount), simulate order book
-# return orders left in backlog
-# Inputs: orders 2D array, orders[i] = [price, amount, orderType]
-# price >= 0, amount >= 0, orderType == 0 for buy, 1 == for sell orders 
-# Task: match buy/sell orders with highest/lowest buy/sell price
-# Constraints: no NEGATIVE price or negative amount
-# Outputs: return length of order book backlog % (10^9 + 7)
-
-# Naive / Non-Optimal Approach:
-# Use lists for buy/sell backlog
-# Scan linearly for matches
-# Every time requires O(n^2) comparisons, N = len(orders)
-
-# Optimal Approach:
-# Use heaps for buy (max-heap), sell (min-heap)
-# O(logN) matching, heaps allow us to access the best match in O(logN) time
-# orders processed efficiently
-# Time-Complexity: O(nlogn), n = len(orders)
-# Space-Complexity: O(n)
-
 import heapq
 
 class Solution:
     def getNumberOfBacklogOrders(self, orders: List[List[int]]) -> int:
-        mod = 10**9 + 7
+        # traverse order stream
+        # create max heap for buy orders
+        # create min heap for sell orders
+        # if top of buy order is greater than top of sell we can fill order
+        # pop off both buy / sell orders 
+        # return len of both heaps at the end
+        MOD = 10**9 + 7
 
-        # max-heap for buy orders
-        buy_heap = []
+        buy_max_heap = []
+        sell_min_heap = []
+
+        for price, amt, orderT in orders:
+            # order[0] = price
+            if orderT == 0:
+                # try filling as many orders as possible
+                while amt > 0 and sell_min_heap and sell_min_heap[0][0] <= price:
+                    sell_price, sell_amt = heapq.heappop(sell_min_heap)
+                    min_fill = min(amt, sell_amt)
+                    amt -= min_fill
+
+
+                    # if there is anything still remaining from the order at to heap
+                    if sell_amt > 0:
+                        heapq.heappush(sell_min_heap, (sell_price, sell_amt - min_fill))
+                
+                # buy order must be put onto heap or else loop will never execute
+                if amt > 0:
+                    heapq.heappush(buy_max_heap, (-price, amt))
+
+            elif orderT == 1:
+                while amt > 0 and buy_max_heap and -buy_max_heap[0][0] >= price:
+                    buy_price, buy_amt = heapq.heappop(buy_max_heap)
+                    min_fill = min(amt, buy_amt)
+                    amt -= min_fill
+
+                    # if there is anything still remaining from the order at to heap
+                    if buy_amt > 0:
+                        heapq.heappush(buy_max_heap, (buy_price, buy_amt - min_fill))
+                
+                # sell order must be put onto heap or else loop will never execute
+                if amt > 0:
+                    heapq.heappush(sell_min_heap, (price, amt))
         
-        # min-heap for sell orders
-        sell_heap = []
+        total_backlog_remaining = 0
+        for order in buy_max_heap:
+            total_backlog_remaining = (total_backlog_remaining + order[1]) % MOD
 
-        # process each order
-        for price, amount, orderType in orders:
-            # determine if order == buy/sell
-            if orderType == 0:
-                # buy order, match with lowest sell
-                # (buy low, sell high)
-                while amount > 0 and sell_heap and sell_heap[0][0] <= price:
-                    # matched sell order to our buy
-                    sell_price, sell_amount = heapq.heappop(sell_heap)
-            else:
-                # sell order, match with highest buy
-                while amount > 0 and buy_heap and -buy_heap[0][0] >= price:
-                    buy_price, buy_amount = heapq.heappop(buy_heap)
-
-
-import heapq
-
-class Solution:
-    def getNumberOfBacklogOrders(self, orders):
-        MOD = 10**9 + 7  # Modulo for final result
-        
-        # Max-heap for buy orders (invert price for max-heap)
-        buy_heap = []
-        # Min-heap for sell orders
-        sell_heap = []
-        
-        # Process each order
-        for price, amount, orderType in orders:
-            if orderType == 0:
-                # Buy order: match with lowest sell
-                while amount > 0 and sell_heap and sell_heap[0][0] <= price:
-                    sell_price, sell_amount = heapq.heappop(sell_heap)
-                    # Find min amount to match
-                    match = min(amount, sell_amount)
-                    amount -= match
-                    sell_amount -= match
-                    # If sell order still has amount, push back
-                    if sell_amount > 0:
-                        heapq.heappush(sell_heap, (sell_price, sell_amount))
-                # If not fully matched, add remaining buy to heap
-                if amount > 0:
-                    heapq.heappush(buy_heap, (-price, amount))
-            else:
-                # Sell order: match with highest buy
-                while amount > 0 and buy_heap and -buy_heap[0][0] >= price:
-                    buy_price, buy_amount = heapq.heappop(buy_heap)
-                    match = min(amount, buy_amount)
-                    amount -= match
-                    buy_amount -= match
-                    if buy_amount > 0:
-                        heapq.heappush(buy_heap, (buy_price, buy_amount))
-                if amount > 0:
-                    heapq.heappush(sell_heap, (price, amount))
-        
-        # Sum all remaining orders in both heaps
-        total = 0
-        for _, amt in buy_heap:
-            total = (total + amt) % MOD
-        for _, amt in sell_heap:
-            total = (total + amt) % MOD
-        return total
-
-
-
-        
+        for order in sell_min_heap:
+            total_backlog_remaining = (total_backlog_remaining + order[1]) % MOD
+            
+        return total_backlog_remaining
