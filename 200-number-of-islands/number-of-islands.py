@@ -12,6 +12,38 @@ class Solution:
 
         rows = len(grid)
         cols = len(grid[0])
+        
+        def dfs(row, col):
+            if row < 0 or row >= rows:
+                return
+            if col < 0 or col >= cols:
+                return
+            
+            if grid[row][col] == "0":
+                return
+
+            dfs(row, col + 1)
+            dfs(row, col + 1)
+            dfs(row, col + 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        rows = len(grid)
+        cols = len(grid[0])
         countIslands = 0
 
         def dfs(row, col):
